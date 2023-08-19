@@ -133,8 +133,9 @@ for trial = 1:numel(stimIDs)
         Eyelink('Message', num2str(FIXATION));
         Eyelink('command', 'record_status_message "FIXATION"');
         sendtrigger(FIXATION,port,SITE,stayup);
-        timing.cfi(thisTrial) = (randsample(4000:6000, 1))/1000; % Duration of the jittered inter-trial interval
-        WaitSecs(timing.cfi(thisTrial));
+%         timing.cfi(trial) = (randsample(4000:6000, 1))/1000; % Duration of the jittered inter-trial interval
+        timing.cfi(trial) = 0.001;
+        WaitSecs(timing.cfi(trial));
 
         %% Presentation of stimulus (5s)
 
@@ -143,17 +144,17 @@ for trial = 1:numel(stimIDs)
 
         if ismember(stimIDs(trial), tblNF) == 1
             TRIGGER = NF;
-            disp(['Positive Stimulus: ' num2str(stimID(trial))])
+            disp(['Neutral to Fearful: ' num2str(stimID(trial))])
             data.condition(trial) = 1;
             stimPath = 'fearful';
         elseif ismember(stimIDs(trial), tblNN) == 1
             TRIGGER = NN;
-            disp(['Negative Stimulus: ' num2str(stimID(trial))])
+            disp(['Neutral to Neutral: ' num2str(stimID(trial))])
             data.condition(trial) = 2;
             stimPath = 'neutral';
         elseif ismember(stimIDs(trial), tblNH) == 1
             TRIGGER = NH;
-            disp(['Neutral Stimulus: ' num2str(stimID(trial))])
+            disp(['Neutral to Happy: ' num2str(stimID(trial))])
             data.condition(trial) = 3;
             stimPath = 'happy';
         end
@@ -163,7 +164,7 @@ for trial = 1:numel(stimIDs)
         moviePtr = Screen('OpenMovie', ptbWindow, movieFile);
 
         % Get the duration of the movie (in seconds)
-        movieDuration = Screen('GetMovieTimeIndex', moviePtr);
+        movieDuration = 5; %Screen('GetMovieTimeIndex', moviePtr);
 
         % Start playing the movie
         Screen('PlayMovie', moviePtr, 1);
@@ -186,7 +187,8 @@ for trial = 1:numel(stimIDs)
         Screen('CloseMovie', moviePtr);
 
     catch
-        psychrethrow(psychlasterror);
+        fprintf('Error occurred: %s\n', lasterr);
+    psychrethrow(psychlasterror);
     end
 end
 
